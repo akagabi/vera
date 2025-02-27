@@ -57,9 +57,33 @@ export default tseslint.config({
 
 ## Resources
 
-- Free Currency API: [ExchangeRate.host](https://exchangerate.host)
+- Free Currency API: [Open Exchange Rates API](https://www.exchangerate-api.com/)
 - Hosting: GitHub Pages or similar free service
 - No backend costs or database fees
+
+## API Key Setup
+
+This project uses the ExchangeRate API which requires an API key. To set up the API key:
+
+### For Local Development
+
+1. Create a `.env` file in the root directory of the project
+2. Add your API key to the `.env` file:
+   ```
+   VITE_EXCHANGE_RATE_API_KEY=your_api_key_here
+   ```
+3. The `.env` file is gitignored and will not be committed to the repository
+
+### For GitHub Actions Deployment
+
+1. Go to your GitHub repository
+2. Navigate to Settings > Secrets and variables > Actions
+3. Click on "New repository secret"
+4. Name: `EXCHANGE_RATE_API_KEY`
+5. Value: Your API key
+6. Click "Add secret"
+
+The GitHub Actions workflow will automatically use this secret during the build process.
 
 ## Deployment Guide
 

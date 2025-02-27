@@ -19,14 +19,24 @@ const initDB = async () => {
   });
 };
 
+// Get API key from environment variable or use fallback for development
+const getApiKey = () => {
+  // In production, this will be replaced with the environment variable
+  // In development, we use a fallback that will be replaced during build
+  return (
+    import.meta.env.VITE_EXCHANGE_RATE_API_KEY || "45bee481c6995e54e23e20d8"
+  );
+};
+
 // Fetch exchange rates from API
 export const fetchExchangeRates = async (
   base: string = "EUR"
 ): Promise<ExchangeRates> => {
   try {
-    // Try to fetch from network
+    // Try to fetch from network using the API key
+    const apiKey = getApiKey();
     const response = await fetch(
-      `https://api.exchangerate.host/latest?base=${base}`
+      `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${base}`
     );
 
     if (!response.ok) {
@@ -35,8 +45,10 @@ export const fetchExchangeRates = async (
 
     const data = await response.json();
     const rates: ExchangeRates = {
-      base: data.base,
-      date: data.date,
+      base: data.base_code,
+      date: new Date(data.time_last_update_unix * 1000)
+        .toISOString()
+        .split("T")[0],
       rates: data.rates,
       timestamp: Date.now(),
     };
