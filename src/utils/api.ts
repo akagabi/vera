@@ -47,8 +47,8 @@ export const fetchExchangeRates = async (
     const data = await response.json();
 
     // Check if the API request was successful
-    if (data.result === "error") {
-      throw new Error(`API Error: ${data.error}`);
+    if (data.result !== "success") {
+      throw new Error(`API Error: ${data.error || "Unknown error"}`);
     }
 
     const rates: ExchangeRates = {
@@ -56,7 +56,7 @@ export const fetchExchangeRates = async (
       date: new Date(data.time_last_update_unix * 1000)
         .toISOString()
         .split("T")[0],
-      rates: data.rates,
+      rates: data.conversion_rates,
       timestamp: Date.now(),
     };
 
