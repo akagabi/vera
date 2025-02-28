@@ -95,19 +95,20 @@ export const convertCurrency = (
 ): number => {
   if (fromCurrency === toCurrency) return amount;
 
-  // If base currency is the same as fromCurrency
-  if (rates[toCurrency]) {
+  // If we're converting from the base currency (which is what rates are based on)
+  if (fromCurrency === "EUR") {
     return amount * rates[toCurrency];
   }
 
-  // If we need to convert from a non-base currency
-  if (rates[fromCurrency]) {
-    // Convert to base first, then to target
-    const amountInBase = amount / rates[fromCurrency];
-    return amountInBase * rates[toCurrency];
+  // If we're converting to the base currency
+  if (toCurrency === "EUR") {
+    return amount / rates[fromCurrency];
   }
 
-  throw new Error("Currency conversion not possible with available rates");
+  // Cross-currency conversion (neither is the base currency)
+  // First convert from source currency to EUR, then from EUR to target currency
+  const amountInEUR = amount / rates[fromCurrency];
+  return amountInEUR * rates[toCurrency];
 };
 
 // Check if rates need updating (older than 24 hours)

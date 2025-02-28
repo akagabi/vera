@@ -5,8 +5,8 @@ import { ArrowUpDownIcon, RefreshCwIcon } from "lucide-react";
 // Initial currencies
 const FROM_CURRENCY = "EUR";
 const TO_CURRENCY = "COP";
-// Base currency for fetching all rates
-const BASE_CURRENCY = "USD";
+// Base currency for fetching all rates - using EUR as the base
+const BASE_CURRENCY = "EUR";
 
 // Common currencies to show in dropdown
 const COMMON_CURRENCIES = [
@@ -56,7 +56,7 @@ const CurrencyConverter: React.FC = () => {
     }
   }, [amount, fromCurrency, toCurrency, rates]);
 
-  // Fetch rates from API - always fetch with BASE_CURRENCY to get all rates
+  // Fetch rates from API - always fetch with BASE_CURRENCY (EUR) to get all rates
   const fetchRates = async () => {
     setIsLoading(true);
     setError(null);
@@ -93,7 +93,16 @@ const CurrencyConverter: React.FC = () => {
 
     try {
       // If converting 1 unit of fromCurrency to toCurrency
-      return convertCurrency(1, fromCurrency, toCurrency, rates.rates);
+      if (fromCurrency === BASE_CURRENCY) {
+        // Direct conversion from base currency
+        return rates.rates[toCurrency];
+      } else if (toCurrency === BASE_CURRENCY) {
+        // Inverse conversion to base currency
+        return 1 / rates.rates[fromCurrency];
+      } else {
+        // Cross-currency conversion
+        return rates.rates[toCurrency] / rates.rates[fromCurrency];
+      }
     } catch (error) {
       console.error("Error calculating exchange rate:", error);
       return null;
