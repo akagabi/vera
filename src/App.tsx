@@ -9,7 +9,7 @@ function App() {
   useEffect(() => {
     // Register service worker
     if ("serviceWorker" in navigator) {
-      const wb = new Workbox("/sw.js");
+      const wb = new Workbox(`${import.meta.env.BASE_URL}sw.js`);
 
       wb.addEventListener("waiting", () => {
         setIsUpdateAvailable(true);
