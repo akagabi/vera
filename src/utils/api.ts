@@ -102,6 +102,7 @@ export const convertCurrency = (
 
   // If we're converting to the base currency
   if (toCurrency === "EUR") {
+    // For high-value currencies like COP, we need to be precise
     return amount / rates[fromCurrency];
   }
 

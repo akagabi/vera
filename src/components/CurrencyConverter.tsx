@@ -48,7 +48,19 @@ const CurrencyConverter: React.FC = () => {
           toCurrency,
           rates.rates
         );
-        setConvertedAmount(result.toFixed(2));
+
+        // Adjust decimal places based on currency type
+        // For major currencies like EUR, USD, GBP, use 2 decimal places
+        // For currencies with small unit values like JPY, use 0 decimal places
+        // For all others, use 2 decimal places by default
+        let decimalPlaces = 2;
+        if (["JPY", "KRW", "IDR", "VND"].includes(toCurrency)) {
+          decimalPlaces = 0;
+        } else if (toCurrency === "BTC") {
+          decimalPlaces = 8;
+        }
+
+        setConvertedAmount(result.toFixed(decimalPlaces));
       } catch (error) {
         setError("Error converting currency");
         console.error(error);
@@ -98,9 +110,12 @@ const CurrencyConverter: React.FC = () => {
         return rates.rates[toCurrency];
       } else if (toCurrency === BASE_CURRENCY) {
         // Inverse conversion to base currency
+        // This is the reciprocal of the rate in the API response
         return 1 / rates.rates[fromCurrency];
       } else {
         // Cross-currency conversion
+        // For example, if converting from COP to USD:
+        // 1 COP = (1/rates[COP]) EUR, then multiply by rates[USD] to get USD
         return rates.rates[toCurrency] / rates.rates[fromCurrency];
       }
     } catch (error) {
@@ -204,7 +219,14 @@ const CurrencyConverter: React.FC = () => {
             </div>
             <div className="text-xs text-muted mt-2">
               1 {fromCurrency} ={" "}
-              {exchangeRate ? exchangeRate.toFixed(4) : "..."} {toCurrency}
+              {exchangeRate
+                ? exchangeRate < 0.001
+                  ? exchangeRate.toFixed(6)
+                  : exchangeRate < 0.1
+                  ? exchangeRate.toFixed(5)
+                  : exchangeRate.toFixed(4)
+                : "..."}{" "}
+              {toCurrency}
             </div>
           </div>
         </div>
