@@ -5,6 +5,8 @@ import { ArrowUpDownIcon, RefreshCwIcon } from "lucide-react";
 // Initial currencies
 const FROM_CURRENCY = "EUR";
 const TO_CURRENCY = "COP";
+// Base currency for fetching all rates
+const BASE_CURRENCY = "USD";
 
 // Common currencies to show in dropdown
 const COMMON_CURRENCIES = [
@@ -54,12 +56,12 @@ const CurrencyConverter: React.FC = () => {
     }
   }, [amount, fromCurrency, toCurrency, rates]);
 
-  // Fetch rates from API
+  // Fetch rates from API - always fetch with BASE_CURRENCY to get all rates
   const fetchRates = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await getExchangeRates(FROM_CURRENCY);
+      const data = await getExchangeRates(BASE_CURRENCY);
       setRates(data);
       setLastUpdated(new Date(data.timestamp).toLocaleString());
       setIsLoading(false);
@@ -84,6 +86,21 @@ const CurrencyConverter: React.FC = () => {
       setAmount(value);
     }
   };
+
+  // Calculate the exchange rate between fromCurrency and toCurrency
+  const getExchangeRate = (): number | null => {
+    if (!rates || !rates.rates) return null;
+
+    try {
+      // If converting 1 unit of fromCurrency to toCurrency
+      return convertCurrency(1, fromCurrency, toCurrency, rates.rates);
+    } catch (error) {
+      console.error("Error calculating exchange rate:", error);
+      return null;
+    }
+  };
+
+  const exchangeRate = getExchangeRate();
 
   return (
     <div className="card w-full max-w-md mx-auto">
@@ -177,8 +194,8 @@ const CurrencyConverter: React.FC = () => {
               )}
             </div>
             <div className="text-xs text-muted mt-2">
-              1 {fromCurrency} = {rates?.rates[toCurrency]?.toFixed(4) || "..."}{" "}
-              {toCurrency}
+              1 {fromCurrency} ={" "}
+              {exchangeRate ? exchangeRate.toFixed(4) : "..."} {toCurrency}
             </div>
           </div>
         </div>
