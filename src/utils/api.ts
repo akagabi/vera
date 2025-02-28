@@ -35,15 +35,22 @@ export const fetchExchangeRates = async (
   try {
     // Try to fetch from network using the API key
     const apiKey = getApiKey();
+    // Using the correct endpoint format for exchangerate-api.com
     const response = await fetch(
       `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${base}`
     );
 
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      throw new Error(`Network response was not ok: ${response.status}`);
     }
 
     const data = await response.json();
+
+    // Check if the API request was successful
+    if (data.result === "error") {
+      throw new Error(`API Error: ${data.error}`);
+    }
+
     const rates: ExchangeRates = {
       base: data.base_code,
       date: new Date(data.time_last_update_unix * 1000)
@@ -67,6 +74,7 @@ export const fetchExchangeRates = async (
       const storedRates = await db.get("rates", base);
 
       if (storedRates) {
+        console.log("Using cached exchange rates from IndexedDB");
         return storedRates;
       }
 
