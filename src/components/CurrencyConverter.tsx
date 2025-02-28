@@ -127,9 +127,9 @@ const CurrencyConverter: React.FC = () => {
   const exchangeRate = getExchangeRate();
 
   return (
-    <div className="card w-full max-w-md mx-auto">
+    <div className="card w-full max-w-md mx-auto bg-white bg-opacity-90 rounded-lg shadow-lg">
       <div className="flex flex-col space-y-2 border-b pb-4">
-        <h3 className="text-3xl font-bold">Currency Converter</h3>
+        <h3 className="text-3xl font-bold">Verita Converter</h3>
         <p className="text-sm text-muted">
           Convert between currencies using the latest exchange rates
         </p>

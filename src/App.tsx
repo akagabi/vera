@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CurrencyConverter from "./components/CurrencyConverter";
 import { Workbox } from "workbox-window";
+import "./App.css";
 
 function App() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -35,7 +36,7 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col funny-background">
       <main className="flex-1 container mx-auto px-4 py-8">
         {!isOnline && (
           <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md mb-4 text-sm">
